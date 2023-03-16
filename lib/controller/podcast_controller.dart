@@ -16,7 +16,7 @@ onInit(){
 }
 
   getresponse ()async{
-    var response=await DioService().getMethod(ApiConstant.getHomeItems);
+    var response=await DioService().getMethod(ApiUrlConstant.getHomeItems);
     if(response.statusCode==200){
       response.data['top_podcasts'].forEach((element){
         podcastList.add(PodcastModel.fromJson(element));

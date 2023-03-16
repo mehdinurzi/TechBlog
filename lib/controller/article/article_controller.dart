@@ -19,7 +19,7 @@ class ArticleListController extends GetxController {
     loading.value = true;
 
     var response =
-        await DioService().getMethod(ApiConstant.getArticleListItems);
+        await DioService().getMethod(ApiUrlConstant.getArticleListItems);
 
     if (response.statusCode == 200) {
       response.data.forEach((element) {

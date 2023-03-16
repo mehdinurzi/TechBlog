@@ -14,7 +14,7 @@ class ArticleListWithTagController extends GetxController {
     articleList.clear();
     var userId = "";
     var response = await DioService().getMethod(
-        "${ApiConstant.baseUrl}article/get.php?command=get_articles_with_tag_id&tag_id=$id&user_id=$userId");
+        "${ApiUrlConstant.baseUrl}article/get.php?command=get_articles_with_tag_id&tag_id=$id&user_id=$userId");
     if (response.statusCode == 200) {
       response.data.forEach((element) {
         articleList.add(ArticleModel.fromJson(element));

@@ -1,16 +1,17 @@
 import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:techblog/controller/article/manage_article_controller.dart';
 import 'package:techblog/controller/article/single_article_controller.dart';
 import 'package:techblog/gen/assets.gen.dart';
 import 'package:techblog/services/pick_file.dart';
-import '../../component/my_component.dart';
 import '../../constant/my_colors.dart';
 import '../../controller/article/article_controller.dart';
 import '../../controller/file_controller.dart';
+import '../../controller/home_screen_controller.dart';
+import 'article_content_web.dart';
 
 // ignore: must_be_immutable
 class SingleManageArticle extends StatelessWidget {
@@ -20,9 +21,47 @@ class SingleManageArticle extends StatelessWidget {
   var manageArticleController = Get.find<ManageArticleController>();
   ArticleListController articleListController =
       Get.put(ArticleListController());
+  getTitle() {
+    Get.defaultDialog(
+      title: "لطفا یه عنوان پر معنا و کوتاه انتخاب کن",
+      backgroundColor: Colors.white,
+      titleStyle: const TextStyle(
+        color: SolidColors.colorTitle,
+      ),
+      content: TextField(
+        controller: manageArticleController.titleTextEditingController,
+        style: const TextStyle(
+          color: SolidColors.colorTitle,
+        ),
+        keyboardType: TextInputType.text,
+        decoration: const InputDecoration(hintText: "اینجا بنویس"),
+      ),
+      confirm: ElevatedButton(
+          onPressed: () {
+            manageArticleController.updateTitle();
+            Get.back();
+          },
+          child: const Text("ثبت")),
+      cancel: ElevatedButton(
+          onPressed: () {
+            Get.back();
+          },
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.white),
+          ),
+          child: const Text(
+            "بعدا",
+            style: TextStyle(color: SolidColors.primeryColor),
+          )),
+    );
+  }
+
+  var homeScreenController = Get.find<HomeScreenController>();
+
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -134,7 +173,9 @@ class SingleManageArticle extends StatelessWidget {
                   child: Column(
                     children: [
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          getTitle();
+                        },
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         child: Row(
@@ -155,12 +196,13 @@ class SingleManageArticle extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: Get.height / 50),
-                      Text(
-                          "اینجا عنوان مقاله قرار میگیره ، یه عنوان جذاب انتخاب کن",
+                      Text(manageArticleController.singleArticle.value.title!,
                           style: textTheme.headlineMedium),
                       SizedBox(height: Get.height / 25),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Get.to(() => ArticleContentEditor());
+                        },
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         child: Row(
@@ -181,12 +223,13 @@ class SingleManageArticle extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: Get.height / 50),
-                      Text(
-                          """من متن و بدنه اصلی مقاله هستم ، اگه میخوای من رو ویرایش کنی و یه مقاله جذاب بنویسی ، نوشته آبی رنگ بالا که نوشته "ویرایش متن اصلی مقاله" رو با انگشتت لمس کن تا وارد ویرایشگر بشی""",
+                      Text(manageArticleController.singleArticle.value.content!,
                           style: textTheme.headlineMedium),
                       SizedBox(height: Get.height / 20),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          chooseCatsBottomSheet(context);
+                        },
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         child: Row(
@@ -202,20 +245,46 @@ class SingleManageArticle extends StatelessWidget {
                             Text(
                               "انتخاب دسته بندی",
                               style: textTheme.labelMedium,
-                            )
+                            ),
                           ],
                         ),
                       ),
+                      SizedBox(height: Get.height / 40),
+                      manageArticleController.singleArticle.value.catName ==
+                              null
+                          ? const Text("")
+                          : Container(
+                              height: Get.height / 15,
+                              decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(50)),
+                                  color: Color.fromARGB(255, 242, 242, 242)),
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    0, 0, Get.width / 32, 0),
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                      Get.width / 15, 15, Get.width / 20, 0),
+                                  child: Text(
+                                    manageArticleController
+                                        .singleArticle.value.catName!,
+                                    style: textTheme.titleMedium,
+                                  ),
+                                ),
+                              )),
                       Padding(
-                        padding: EdgeInsets.only(top: Get.height / 8),
+                        padding: EdgeInsets.only(
+                            top: Get.height / 20, bottom: Get.height / 40),
                         child: SizedBox(
                             width: Get.width / 2.6,
                             height: Get.height / 15.46,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: ()async{await manageArticleController.storeArticle();},
                               style:
                                   Theme.of(context).elevatedButtonTheme.style,
                               child: Text(
+                                manageArticleController.loading.value==true?
+                                "صبر کنید...":
                                 "تموم شد",
                                 style: textTheme.bodyMedium,
                               ),
@@ -227,6 +296,151 @@ class SingleManageArticle extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget cats(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+
+    var homeScreenController = Get.find<HomeScreenController>();
+    return SizedBox(
+      height: Get.height / 8,
+      child: GridView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: homeScreenController.tagList.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 20,
+              crossAxisCount: 2,
+              childAspectRatio: Get.width / 1500),
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () {
+                manageArticleController.singleArticle.update((val) {
+                  val?.catName = homeScreenController.tagList[index].title!;
+                  val?.catId = homeScreenController.tagList[index].id!;
+                });
+              },
+              splashColor: Colors.transparent,
+              child: Container(
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(24)),
+                      gradient: LinearGradient(
+                          colors: GradiantColor.tags,
+                          begin: Alignment.centerRight,
+                          end: Alignment.centerLeft)),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, Get.width / 32, 0),
+                    child: Row(
+                      children: [
+                        ImageIcon(
+                          Image.asset(Assets.icons.hashtag.path).image,
+                          color: Colors.white,
+                          size: Get.height / 60,
+                        ),
+                        SizedBox(
+                          width: Get.width / 20,
+                        ),
+                        Text(
+                          homeScreenController.tagList[index].title!,
+                          style: textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  )),
+            );
+          }),
+    );
+  }
+
+  Widget mycat(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+    return Obx(
+      () => manageArticleController.singleArticle.value.catName == null
+          ? const Text("")
+          : Container(
+              height: Get.height / 15,
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                  color: Color.fromARGB(255, 242, 242, 242)),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(0, 0, Get.width / 32, 0),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      Get.width / 15, 15, Get.width / 20, 0),
+                  child: Text(
+                    manageArticleController.singleArticle.value.catName!,
+                    style: textTheme.titleMedium,
+                  ),
+                ),
+              )),
+    );
+  }
+
+  chooseCatsBottomSheet(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+    Get.bottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      Container(
+        height: Get.height / 1.5,
+        decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(30), topLeft: Radius.circular(30))),
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                  Get.height / 30, Get.height / 30, Get.height / 30, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SvgPicture.asset(
+                    Assets.images.happyBot.path,
+                    height: Get.height / 20,
+                  ),
+                  SizedBox(
+                    width: Get.width / 30,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: Get.height / 65),
+                    child: Text(
+                        "روی دسته بندی مرتبط ضربه بزن تا به مقاله اضافه بشه",
+                        style: textTheme.displaySmall),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: Get.height / 20,
+            ),
+            cats(context),
+            SizedBox(
+              height: Get.height / 20,
+            ),
+            Image.asset(
+              Assets.icons.downCatArrow.path,
+              scale: 3,
+            ),
+            SizedBox(
+              height: Get.height / 20,
+            ),
+            mycat(context),
+            SizedBox(
+              height: Get.height / 10,
+            ),
+            SizedBox(
+                width: Get.width / 2.54,
+                height: Get.height / 15.46,
+                child: ElevatedButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    child: const Text("تایید"))),
+          ],
         ),
       ),
     );

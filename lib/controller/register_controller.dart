@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:techblog/constant/api_constant.dart';
 import 'package:techblog/constant/storage_const.dart';
+import 'package:techblog/controller/article/manage_article_controller.dart';
 import 'package:techblog/gen/assets.gen.dart';
 import 'package:techblog/services/dio_service.dart';
 import 'package:techblog/view/my_cats.dart';
@@ -23,7 +24,7 @@ class RegisterController extends GetxController {
       'email': emailTextEditing.text,
       'command': 'register'
     };
-    var response = await DioService().postMethod(map, ApiConstant.postRegister);
+    var response = await DioService().postMethod(map, ApiUrlConstant.postRegister);
             // debugPrint(GetStorage().read(StorageKey.userId));
 
     
@@ -39,7 +40,7 @@ class RegisterController extends GetxController {
       'user_id': userId
     };
 
-    var response = await DioService().postMethod(map, ApiConstant.postRegister);
+    var response = await DioService().postMethod(map, ApiUrlConstant.postRegister);
     debugPrint(response.data.toString()); 
 
     // if (response.data['response'] == 'verified') {
@@ -157,7 +158,8 @@ Row(
   children: [
     TextButton.icon(onPressed: (){
       navigator?.pop(context);
-      Get.toNamed(NamedRoute.routeManageArticlePage);}, icon: Image.asset(Assets.icons.writeArticleIcon.path,height: Get.height/25,), label:  Text("مدیریت مقاله ها",style: textTheme.headlineLarge)),
+      Get.toNamed(NamedRoute.routeManageArticlePage);
+      }, icon: Image.asset(Assets.icons.writeArticleIcon.path,height: Get.height/25,), label:  Text("مدیریت مقاله ها",style: textTheme.headlineLarge)),
   TextButton.icon(onPressed: (){}, icon: Image.asset(Assets.icons.writeMicrophone.path,height: Get.height/25,), label:  Text("مدیریت پادکست ها",style: textTheme.headlineLarge,)),
 ],)
       ],

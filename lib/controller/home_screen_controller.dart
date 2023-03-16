@@ -9,6 +9,7 @@ import 'package:techblog/services/dio_service.dart';
 class HomeScreenController extends GetxController {
   Rx<PosterModel> poster = PosterModel().obs;
   RxList<TagsModel> tagList = RxList();
+  RxList<TagsModel> selectedTags2 = RxList();
   RxList<ArticleModel> topVisitedList = RxList();
   RxList<PodcastModel> topPodcastList = RxList();
   RxBool loading = false.obs;
@@ -21,7 +22,7 @@ class HomeScreenController extends GetxController {
 
   getHomeItems() async {
     loading.value = true;
-    var response = await DioService().getMethod(ApiConstant.getHomeItems);
+    var response = await DioService().getMethod(ApiUrlConstant.getHomeItems);
 
     if (response.statusCode == 200) {
       response.data['top_visited'].forEach((element) {

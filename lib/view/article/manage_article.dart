@@ -8,25 +8,26 @@ import 'package:techblog/main.dart';
 
 // ignore: must_be_immutable
 class ManageArticle extends StatelessWidget {
-   ManageArticle({super.key});
+  ManageArticle({super.key});
 
-var manageArticleController=Get.find<ManageArticleController>();
+  var manageArticleController = Get.find<ManageArticleController>();
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
     return Scaffold(
-            backgroundColor: Colors.white,
-
-      appBar: appBar(  "مدیریت مقاله ها"),
-      body:Obx(() => manageArticleController.loading.value==false?manageArticleController.articleList.isNotEmpty? FullArticleState(textTheme):ArticleEmptyState(textTheme):const Loading())
-      //  
-    );
+        backgroundColor: Colors.white,
+        appBar: appBar("مدیریت مقاله ها"),
+        body: Obx(() => manageArticleController.loading.value == false
+            ? manageArticleController.articleList.isNotEmpty
+                ? FullArticleState(textTheme)
+                : ArticleEmptyState(textTheme)
+            : const Loading())
+        //
+        );
   }
 
   // ignore: non_constant_identifier_names
-  Widget ArticleEmptyState(
-    TextTheme textTheme
-  ) {
+  Widget ArticleEmptyState(TextTheme textTheme) {
     return Center(
         child: Column(
       children: [
@@ -45,7 +46,6 @@ var manageArticleController=Get.find<ManageArticleController>();
 اضافه نکردی !!!""", style: textTheme.headlineMedium),
           textAlign: TextAlign.center,
         ),
-        
         SizedBox(
           height: Get.height / 2.8,
         ),
@@ -61,24 +61,24 @@ var manageArticleController=Get.find<ManageArticleController>();
                 style: textTheme.bodyMedium,
               ),
             ))
-      ], 
+      ],
     ));
   }
 
   // ignore: non_constant_identifier_names
-  Widget FullArticleState(  TextTheme textTheme) {
+  Widget FullArticleState(TextTheme textTheme) {
     return Scaffold(
-      bottomNavigationBar:  SizedBox(
-            height: Get.height / 15.46,
-            child: ElevatedButton(
-              onPressed: () {
-                Get.toNamed(NamedRoute.routeSingleManageArticle);
-              },
-              child: Text(
-                "بریم برای نوشتن یه مقاله باحال",
-                style: textTheme.bodyMedium,
-              ),
-            )),
+      bottomNavigationBar: SizedBox(
+          height: Get.height / 15.46,
+          child: ElevatedButton(
+            onPressed: () {
+              Get.toNamed(NamedRoute.routeSingleManageArticle);
+            },
+            child: Text(
+              "بریم برای نوشتن یه مقاله باحال",
+              style: textTheme.bodyMedium,
+            ),
+          )),
       body: Obx(
         () => ListView.builder(
             itemCount: manageArticleController.articleList.length,
@@ -89,6 +89,7 @@ var manageArticleController=Get.find<ManageArticleController>();
                 child: InkWell(
                   hoverColor: Colors.white,
                   onTap: () {
+                    // TODO
                     // route to single manage
                   },
                   child: SizedBox(
@@ -97,8 +98,8 @@ var manageArticleController=Get.find<ManageArticleController>();
                     child: Row(
                       children: [
                         CachedNetworkImage(
-                            imageUrl:
-                                manageArticleController.articleList[index].image!,
+                            imageUrl: manageArticleController
+                                .articleList[index].image!,
                             placeholder: ((context, url) => const Loading()),
                             errorWidget: ((context, url, error) => Image(
                                     image: Image.asset(
@@ -158,8 +159,6 @@ var manageArticleController=Get.find<ManageArticleController>();
                                     ],
                                   ),
                                 ),
-              
-                              
                               ],
                             ),
                           ),

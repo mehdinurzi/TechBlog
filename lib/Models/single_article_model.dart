@@ -13,14 +13,19 @@ class SingleArticleModel {
   String? createdAt;
   bool? isFavorite;
 
-    SingleArticleModel();
+    SingleArticleModel( {
+  required this. image,
+  required this. title,
+   required this.content,
+   
+});
 
   SingleArticleModel.fromJson(Map<String, dynamic> element) {
     var info=element ['info'];
     id = info["id"];
     title = info["title"];
     content = info["content"];
-    image =ApiConstant.hostDlUrl+ info["image"];
+    image =ApiUrlConstant.hostDlUrl+ info["image"];
     catId = info["cat_id"];
     catName = info["cat_name"];
     author = info["author"];
